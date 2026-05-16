@@ -22,12 +22,12 @@
       </div>
     </div>
 
-    <menu role="tablist">
-      <menuitem role="tab">File</menuitem>
-      <menuitem role="tab">Edit</menuitem>
-      <menuitem role="tab">View</menuitem>
-      <menuitem role="tab">Help</menuitem>
-    </menu>
+    <div class="menu-bar">
+      <span class="menu-item">File</span>
+      <span class="menu-item">Edit</span>
+      <span class="menu-item">View</span>
+      <span class="menu-item">Help</span>
+    </div>
 
     <div class="address-bar" id="addressBar">
       <span class="address-label">Address:</span>
@@ -35,17 +35,15 @@
     </div>
 
     <div class="window-body" id="windowBody">
-      <div class="sunken-panel" id="contentsWrapper">
-        <div class="contents-pane" id="contentsPane">
-          <div class="loading-indicator" id="loadingIndicator">
-            <div class="hourglass"></div>
-          </div>
+      <div class="contents-pane" id="contentsPane">
+        <div class="loading-indicator" id="loadingIndicator">
+          <div class="hourglass"></div>
         </div>
       </div>
     </div>
 
     <div class="status-bar" id="statusBar">
-      <p class="status-bar-field" id="itemCount"></p>
+      <span id="itemCount"></span>
     </div>
   </div>
 

@@ -1,5 +1,5 @@
 // The YouTube Library — Win95 File Explorer
-// v0.2.0
+// v0.2.1
 
 window.DEBUG = {};
 
@@ -7,15 +7,24 @@ var state = {
   tree: null,
   currentPath: null,
   folderCache: {},
+  videoWindows: [],
 };
 
 window.DEBUG.state = state;
 
 var BASE = location.pathname.replace(/\/[^/]*$/, '');
 
-var FOLDER_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="12" height="4" rx="1" fill="#F5C842" stroke="#C0A000" stroke-width="1"/><rect x="4" y="8" width="26" height="20" rx="2" fill="#FDE074" stroke="#C0A000" stroke-width="1"/></svg>';
+// Period-accurate Win98-style pixel folder icon (manila folder with tab)
+var FOLDER_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+  + '<rect x="1" y="5" width="13" height="5" rx="1" fill="#F5D67B" stroke="#808080" stroke-width="1"/>'
+  + '<rect x="2" y="9" width="28" height="20" rx="1" fill="#FCE994" stroke="#808080" stroke-width="1"/>'
+  + '<rect x="2" y="9" width="28" height="3" fill="#FDEAB0"/>'
+  + '</svg>';
 
-var VIDEO_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="6" width="24" height="20" rx="2" fill="#808080" stroke="#404040" stroke-width="1"/><polygon points="12,10 12,22 24,16" fill="#fff"/></svg>';
+var VIDEO_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+  + '<rect x="4" y="6" width="24" height="20" rx="2" fill="#808080" stroke="#404040" stroke-width="1"/>'
+  + '<polygon points="12,10 12,22 24,16" fill="#fff"/>'
+  + '</svg>';
 
 var FOLDER_ICON_URL = 'data:image/svg+xml;base64,' + btoa(FOLDER_ICON_SVG);
 var VIDEO_ICON_URL = 'data:image/svg+xml;base64,' + btoa(VIDEO_ICON_SVG);
@@ -174,7 +183,7 @@ function loadAndRenderFolder(path) {
             if (it.type === 'folder') {
               navigateTo(it.path);
             } else {
-              openVideo(it.videoData);
+              openVideoWindow(it.videoData);
             }
           };
         })(item),
@@ -211,7 +220,7 @@ function createIcon(opts) {
   div.tabIndex = 0;
 
   var img = document.createElement('img');
-  img.className = 'icon-img ' + (type === 'folder' ? 'folder-icon' : 'video-icon');
+  img.className = 'icon-img';
   img.draggable = false;
 
   if (gifUrl) {
@@ -234,54 +243,184 @@ function createIcon(opts) {
   return div;
 }
 
-// ---- Video Popup ----
+// ---- Video Windows (multi-window, draggable) ----
 
-function openVideo(video) {
-  var popup = document.getElementById('videoPopup');
-  var title = document.getElementById('videoPopupTitle');
-  var container = document.getElementById('videoContainer');
+function openVideoWindow(video) {
+  var win = document.createElement('div');
+  win.className = 'window video-window visible';
 
-  title.textContent = video.title;
+  var offsetX = 30 + state.videoWindows.length * 25;
+  var offsetY = 40 + state.videoWindows.length * 25;
+  win.style.left = offsetX + 'px';
+  win.style.top = offsetY + 'px';
 
-  if (video.embeddable) {
-    container.innerHTML = '<iframe src="https://www.youtube.com/embed/' + video.id + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-  } else {
-    container.innerHTML = '<div class="external-link-msg"><p>This video cannot be embedded.</p><p><a href="https://youtube.com/watch?v=' + video.id + '" target="_blank" rel="noopener">Open on YouTube</a></p></div>';
+  win.innerHTML =
+    '<div class="title-bar video-title-bar">' +
+      '<div class="title-bar-text">' + escapeHTML(video.title) + '</div>' +
+      '<div class="title-bar-controls">' +
+        '<button aria-label="Minimize"></button>' +
+        '<button aria-label="Maximize"></button>' +
+        '<button aria-label="Close"></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="window-body video-window-body">' +
+      (video.embeddable
+        ? '<div class="video-container"><iframe src="https://www.youtube.com/embed/' + video.id + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>'
+        : '<div class="external-link-msg"><p>This video cannot be embedded.</p><p><a href="https://youtube.com/watch?v=' + video.id + '" target="_blank" rel="noopener">Open on YouTube</a></p></div>'
+      ) +
+    '</div>';
+
+  addResizeHandles(win);
+  document.body.appendChild(win);
+  makeDraggable(win);
+  makeResizable(win);
+
+  // Close button
+  var closeBtn = win.querySelector('button[aria-label="Close"]');
+  closeBtn.addEventListener('click', function() {
+    closeVideoWindow(win);
+  });
+
+  // Maximize button
+  var maxBtn = win.querySelector('button[aria-label="Maximize"]');
+  maxBtn.addEventListener('click', function() {
+    win.classList.toggle('maximized');
+    if (win.classList.contains('maximized')) {
+      win._prevRect = { left: win.style.left, top: win.style.top, width: win.style.width, height: win.style.height };
+      win.style.left = '0';
+      win.style.top = '0';
+      win.style.width = '100vw';
+      win.style.height = 'calc(100vh - 34px)';
+    } else if (win._prevRect) {
+      win.style.left = win._prevRect.left;
+      win.style.top = win._prevRect.top;
+      win.style.width = win._prevRect.width;
+      win.style.height = win._prevRect.height;
+    }
+    win._resized = true;
+  });
+
+  state.videoWindows.push(win);
+  win._videoData = video;
+}
+
+function closeVideoWindow(win) {
+  win.classList.remove('visible');
+  var idx = state.videoWindows.indexOf(win);
+  if (idx >= 0) state.videoWindows.splice(idx, 1);
+  if (win.parentNode) win.parentNode.removeChild(win);
+}
+
+function escapeHTML(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---- Window Dragging ----
+
+function makeDraggable(win) {
+  var titleBar = win.querySelector('.title-bar');
+  if (!titleBar) return;
+
+  titleBar.addEventListener('mousedown', function(e) {
+    if (e.target.tagName === 'BUTTON') return; // Don't drag on button clicks
+    e.preventDefault();
+
+    var rect = win.getBoundingClientRect();
+    var offsetX = e.clientX - rect.left;
+    var offsetY = e.clientY - rect.top;
+
+    win.style.position = 'fixed';
+    win.style.left = rect.left + 'px';
+    win.style.top = rect.top + 'px';
+    win.style.margin = '0';
+    win.style.zIndex = getTopZIndex() + 1;
+
+    function onMove(e) {
+      win.style.left = (e.clientX - offsetX) + 'px';
+      win.style.top = (e.clientY - offsetY) + 'px';
+      win._dragged = true;
+    }
+
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// ---- Window Resizing ----
+
+function addResizeHandles(win) {
+  var directions = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+  for (var i = 0; i < directions.length; i++) {
+    var handle = document.createElement('div');
+    handle.className = 'resize-handle ' + directions[i];
+    win.appendChild(handle);
   }
-
-  popup.classList.add('visible');
-  addOverlay();
 }
 
-function closeVideo() {
-  var popup = document.getElementById('videoPopup');
-  var container = document.getElementById('videoContainer');
-  popup.classList.remove('visible');
-  container.innerHTML = '';
-  removeOverlay();
-}
+function makeResizable(win) {
+  var handles = win.querySelectorAll('.resize-handle');
+  for (var i = 0; i < handles.length; i++) {
+    handles[i].addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-function addOverlay() {
-  var overlay = document.getElementById('desktopOverlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'desktopOverlay';
-    overlay.className = 'desktop-overlay';
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', closeVideo);
+      var direction = e.target.className.replace('resize-handle ', '').trim();
+      var startX = e.clientX;
+      var startY = e.clientY;
+      var rect = win.getBoundingClientRect();
+
+      function onMove(e) {
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+
+        if (direction.indexOf('e') >= 0) {
+          win.style.width = Math.max(320, rect.width + dx) + 'px';
+        }
+        if (direction.indexOf('w') >= 0) {
+          win.style.width = Math.max(320, rect.width - dx) + 'px';
+          win.style.left = (rect.left + dx) + 'px';
+        }
+        if (direction.indexOf('s') >= 0) {
+          win.style.height = Math.max(240, rect.height + dy) + 'px';
+        }
+        if (direction.indexOf('n') >= 0) {
+          win.style.height = Math.max(240, rect.height - dy) + 'px';
+          win.style.top = (rect.top + dy) + 'px';
+        }
+        win._resized = true;
+      }
+
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
   }
-  overlay.classList.add('visible');
 }
 
-function removeOverlay() {
-  var overlay = document.getElementById('desktopOverlay');
-  if (overlay) overlay.classList.remove('visible');
+function getTopZIndex() {
+  var max = 100;
+  var windows = document.querySelectorAll('.video-window, #explorer');
+  for (var i = 0; i < windows.length; i++) {
+    var z = parseInt(windows[i].style.zIndex || getComputedStyle(windows[i]).zIndex || '0');
+    if (z > max) max = z;
+  }
+  return max;
 }
 
 // ---- Title Bar Buttons ----
 
 function setupTitleBarButtons() {
-  // Close button — navigate to root (Library home)
   var closeBtn = document.querySelector('#explorer .title-bar-controls button[aria-label="Close"]');
   if (closeBtn) {
     closeBtn.addEventListener('click', function() {
@@ -289,7 +428,6 @@ function setupTitleBarButtons() {
     });
   }
 
-  // Maximize button — toggle full-width
   var maximizeBtn = document.querySelector('#explorer .title-bar-controls button[aria-label="Maximize"]');
   if (maximizeBtn) {
     maximizeBtn.addEventListener('click', function() {
@@ -298,9 +436,6 @@ function setupTitleBarButtons() {
     });
   }
 }
-
-// Close popup via its title bar button
-document.getElementById('closeVideo').addEventListener('click', closeVideo);
 
 // ---- Breadcrumb ----
 
@@ -363,10 +498,13 @@ function setLoading(on) {
 
 function showError(msg) {
   var pane = document.getElementById('contentsPane');
-  pane.innerHTML = '<p class="status-bar-field" style="padding:40px;text-align:center;">' + msg + '</p>';
+  pane.innerHTML = '<div style="text-align:center;padding:40px;font-size:12px;">' + msg + '</div>';
 }
 
 // ---- Init ----
 
 setupTitleBarButtons();
+makeDraggable(document.getElementById('explorer'));
+makeResizable(document.getElementById('explorer'));
+addResizeHandles(document.getElementById('explorer'));
 init();

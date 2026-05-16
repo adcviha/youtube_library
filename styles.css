@@ -11,6 +11,7 @@ html, body {
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
 }
 
 /* Explorer Window */
@@ -18,15 +19,40 @@ html, body {
   max-width: 800px;
   min-height: 500px;
   margin: 0 auto;
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
 #explorer.maximized {
   max-width: none;
   width: calc(100vw - 40px);
   min-height: calc(100vh - 40px);
+}
+
+/* Draggable — title bar is the drag handle */
+.title-bar {
+  cursor: move;
+  user-select: none;
+}
+
+/* Menu Bar */
+.menu-bar {
+  display: flex;
+  gap: 0;
+  padding: 2px 4px;
+  background: #c0c0c0;
+  font-size: 12px;
+}
+
+.menu-item {
+  cursor: default;
+  padding: 2px 6px;
+}
+
+.menu-item:hover {
+  background: #000080;
+  color: #fff;
 }
 
 /* Address Bar */
@@ -36,6 +62,7 @@ html, body {
   gap: 6px;
   padding: 4px 8px;
   background: #c0c0c0;
+  border-top: 1px solid #808080;
   border-bottom: 1px solid #808080;
   font-size: 12px;
 }
@@ -73,13 +100,11 @@ html, body {
 }
 
 /* Contents Pane */
-#contentsWrapper {
+.window-body {
   flex: 1;
   overflow-y: auto;
-  margin: 0;
-}
-
-.window-body {
+  padding: 4px;
+  background: #fff;
   position: relative;
 }
 
@@ -115,32 +140,12 @@ html, body {
   color: #fff;
 }
 
-.icon-item.selected {
-  background: #000080;
-  border: 1px dotted #ffff00;
-}
-
-.icon-item.selected .icon-label {
-  color: #fff;
-  background: #000080;
-}
-
 .icon-img {
   width: 32px;
   height: 32px;
   image-rendering: pixelated;
   margin-bottom: 4px;
   pointer-events: none;
-}
-
-.icon-img.folder-icon {
-  width: 32px;
-  height: 32px;
-}
-
-.icon-img.video-icon {
-  width: 32px;
-  height: 32px;
 }
 
 .icon-label {
@@ -203,33 +208,38 @@ html, body {
   border-bottom: 10px solid #000;
 }
 
-/* Video Popup */
-.video-popup {
+/* Status Bar */
+.status-bar {
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+/* Video Window (dynamically created) */
+.video-window {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 660px;
-  z-index: 1000;
+  top: 50px;
+  left: 50px;
+  width: 560px;
+  z-index: 100;
   display: none;
 }
 
-.video-popup.visible {
+.video-window.visible {
   display: block;
 }
 
-.video-popup-body {
+.video-window-body {
   padding: 0;
   background: #000;
 }
 
-#videoContainer {
+.video-container {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
 }
 
-#videoContainer iframe {
+.video-container iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -250,7 +260,7 @@ html, body {
   color: #000080;
 }
 
-/* Desktop overlay when popup is open */
+/* Desktop overlay */
 .desktop-overlay {
   position: fixed;
   top: 0;
@@ -258,10 +268,25 @@ html, body {
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.3);
-  z-index: 999;
+  z-index: 99;
   display: none;
 }
 
 .desktop-overlay.visible {
   display: block;
 }
+
+/* Window resize handles */
+.resize-handle {
+  position: absolute;
+  z-index: 10;
+}
+
+.resize-handle.nw { top: -3px; left: -3px; width: 8px; height: 8px; cursor: nw-resize; }
+.resize-handle.n  { top: -3px; left: 8px; right: 8px; height: 8px; cursor: n-resize; }
+.resize-handle.ne { top: -3px; right: -3px; width: 8px; height: 8px; cursor: ne-resize; }
+.resize-handle.w  { top: 8px; left: -3px; width: 8px; bottom: 8px; cursor: w-resize; }
+.resize-handle.e  { top: 8px; right: -3px; width: 8px; bottom: 8px; cursor: e-resize; }
+.resize-handle.sw { bottom: -3px; left: -3px; width: 8px; height: 8px; cursor: sw-resize; }
+.resize-handle.s  { bottom: -3px; left: 8px; right: 8px; height: 8px; cursor: s-resize; }
+.resize-handle.se { bottom: -3px; right: -3px; width: 8px; height: 8px; cursor: se-resize; }
