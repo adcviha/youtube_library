@@ -1,5 +1,5 @@
 // The YouTube Library — Win95 File Explorer
-// v0.2.1
+// v0.3.0
 
 window.DEBUG = {};
 
@@ -501,10 +501,43 @@ function showError(msg) {
   pane.innerHTML = '<div style="text-align:center;padding:40px;font-size:12px;">' + msg + '</div>';
 }
 
+// ---- Theme Toggle ----
+
+var THEME_KEY = 'youtube_library_theme';
+var win95Link = document.getElementById('themeWin95');
+var xpLink = document.getElementById('themeXP');
+
+function getTheme() {
+  return localStorage.getItem(THEME_KEY) || 'win95';
+}
+
+function setTheme(theme) {
+  if (theme === 'xp') {
+    win95Link.disabled = true;
+    xpLink.disabled = false;
+  } else {
+    win95Link.disabled = false;
+    xpLink.disabled = true;
+  }
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  setTheme(getTheme() === 'win95' ? 'xp' : 'win95');
+}
+
+function initTheme() {
+  setTheme(getTheme());
+}
+
 // ---- Init ----
 
+initTheme();
 setupTitleBarButtons();
 makeDraggable(document.getElementById('explorer'));
 makeResizable(document.getElementById('explorer'));
 addResizeHandles(document.getElementById('explorer'));
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
 init();

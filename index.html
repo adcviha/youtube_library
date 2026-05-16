@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The YouTube Library</title>
-<link rel="stylesheet" href="https://unpkg.com/98.css@0.1.25/dist/98.css">
+<link rel="stylesheet" id="themeWin95" href="https://unpkg.com/98.css@0.1.25/dist/98.css">
+<link rel="stylesheet" id="themeXP" href="https://unpkg.com/xp.css@0.2.6/dist/XP.css" disabled>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -26,6 +27,7 @@
       <span class="menu-item">File</span>
       <span class="menu-item">Edit</span>
       <span class="menu-item">View</span>
+      <span class="menu-item" id="themeToggle">Theme</span>
       <span class="menu-item">Help</span>
     </div>
 
@@ -43,20 +45,7 @@
     </div>
 
     <div class="status-bar" id="statusBar">
-      <span id="itemCount"></span>
-    </div>
-  </div>
-
-  <!-- Video Popup -->
-  <div class="window video-popup" id="videoPopup" style="display:none;">
-    <div class="title-bar">
-      <div class="title-bar-text" id="videoPopupTitle">Video</div>
-      <div class="title-bar-controls">
-        <button aria-label="Close" id="closeVideo"></button>
-      </div>
-    </div>
-    <div class="window-body video-popup-body">
-      <div id="videoContainer"></div>
+      <span class="status-bar-field" id="itemCount"></span>
     </div>
   </div>
 
