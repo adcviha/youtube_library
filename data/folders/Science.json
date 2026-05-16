@@ -1,0 +1,27 @@
+{
+  "path": "Science",
+  "videos": [
+    {
+      "id": "WUvTyaaNkzM",
+      "title": "The Essence of Calculus",
+      "channel": "3Blue1Brown",
+      "embeddable": true,
+      "gif_url": null
+    },
+    {
+      "id": "Z0TZ2SJYjLY",
+      "title": "The Most Important Science Book Ever Written",
+      "channel": "Veritasium",
+      "embeddable": true,
+      "gif_url": null
+    },
+    {
+      "id": "NOKhGriDJXg",
+      "title": "The Scientific Method is Broken",
+      "channel": "Sabine Hossenfelder",
+      "embeddable": false,
+      "gif_url": null
+    }
+  ],
+  "last_updated": "2026-05-15T00:00:00Z"
+}

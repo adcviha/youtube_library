@@ -1,0 +1,20 @@
+{
+  "path": "Science/Chemistry",
+  "videos": [
+    {
+      "id": "C6eOjL8njqI",
+      "title": "The Map of Chemistry",
+      "channel": "Domain of Science",
+      "embeddable": true,
+      "gif_url": null
+    },
+    {
+      "id": "V9qJxR0LHbE",
+      "title": "The 10 Most AMAZING Chemical Reactions",
+      "channel": "Reactions",
+      "embeddable": true,
+      "gif_url": null
+    }
+  ],
+  "last_updated": "2026-05-15T00:00:00Z"
+}

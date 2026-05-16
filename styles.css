@@ -1,0 +1,293 @@
+/* Desktop */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.desktop {
+  background: #008080;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Explorer Window */
+#explorer {
+  max-width: 800px;
+  min-height: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Menu Bar */
+.menu-bar {
+  display: flex;
+  gap: 12px;
+  padding: 3px 8px;
+  background: #c0c0c0;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 12px;
+  border-bottom: 1px solid #808080;
+}
+
+.menu-item {
+  cursor: default;
+  padding: 1px 4px;
+}
+
+.menu-item:hover {
+  background: #000080;
+  color: #fff;
+}
+
+/* Address Bar */
+.address-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 12px;
+}
+
+.address-label {
+  color: #000;
+  flex-shrink: 0;
+}
+
+#breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.breadcrumb-seg {
+  color: #000;
+  cursor: pointer;
+  padding: 1px 2px;
+}
+
+.breadcrumb-seg:hover {
+  background: #000080;
+  color: #fff;
+  text-decoration: none;
+}
+
+.breadcrumb-sep {
+  color: #808080;
+  cursor: default;
+}
+
+.breadcrumb-seg.root {
+  font-weight: bold;
+}
+
+/* Contents Pane */
+.window-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: #fff;
+  position: relative;
+}
+
+.contents-pane {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px 8px;
+  padding: 4px;
+  align-content: start;
+}
+
+/* Icons */
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  text-align: center;
+  user-select: none;
+}
+
+.icon-item:hover {
+  background: #c0c0c0;
+}
+
+.icon-item:active {
+  background: #000080;
+}
+
+.icon-item:active .icon-label {
+  color: #fff;
+}
+
+.icon-item.selected {
+  background: #000080;
+  border: 1px dotted #ffff00;
+}
+
+.icon-item.selected .icon-label {
+  color: #fff;
+  background: #000080;
+}
+
+.icon-img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  margin-bottom: 4px;
+  pointer-events: none;
+}
+
+.icon-img.folder-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-img.video-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-label {
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 11px;
+  color: #000;
+  word-break: break-word;
+  max-width: 80px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Loading */
+.loading-indicator {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: wait;
+}
+
+.loading-indicator.active {
+  display: block;
+}
+
+.hourglass {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #808080;
+  border-radius: 3px;
+  position: relative;
+}
+
+.hourglass::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #000;
+}
+
+.hourglass::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid #000;
+}
+
+/* Status Bar */
+.status-bar {
+  padding: 3px 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 11px;
+  color: #000;
+}
+
+/* Video Popup */
+.video-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 660px;
+  z-index: 1000;
+  display: none;
+}
+
+.video-popup.visible {
+  display: block;
+}
+
+.video-popup-body {
+  padding: 0;
+  background: #000;
+}
+
+#videoContainer {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+#videoContainer iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.external-link-msg {
+  padding: 30px;
+  text-align: center;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+  font-size: 12px;
+  background: #fff;
+  color: #000;
+}
+
+.external-link-msg a {
+  color: #000080;
+}
+
+/* Desktop overlay when popup is open */
+.desktop-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 999;
+  display: none;
+}
+
+.desktop-overlay.visible {
+  display: block;
+}

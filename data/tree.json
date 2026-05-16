@@ -1,0 +1,93 @@
+{
+  "categories": {
+    "Science": {
+      "name": "Science",
+      "path": "Science",
+      "wiki_url": "https://en.wikipedia.org/wiki/Science",
+      "level": 1,
+      "picks_editor": "Marge",
+      "children": [
+        {
+          "name": "Physics",
+          "path": "Science/Physics",
+          "wiki_url": "https://en.wikipedia.org/wiki/Physics",
+          "level": 2,
+          "children": [
+            {
+              "name": "Quantum Mechanics",
+              "path": "Science/Physics/Quantum_Mechanics",
+              "wiki_url": "https://en.wikipedia.org/wiki/Quantum_mechanics",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Chemistry",
+          "path": "Science/Chemistry",
+          "wiki_url": "https://en.wikipedia.org/wiki/Chemistry",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    "History": {
+      "name": "History",
+      "path": "History",
+      "wiki_url": "https://en.wikipedia.org/wiki/History",
+      "level": 1,
+      "picks_editor": "Tony",
+      "children": [
+        {
+          "name": "Ancient History",
+          "path": "History/Ancient_History",
+          "wiki_url": "https://en.wikipedia.org/wiki/Ancient_history",
+          "level": 2,
+          "children": []
+        },
+        {
+          "name": "Modern History",
+          "path": "History/Modern_History",
+          "wiki_url": "https://en.wikipedia.org/wiki/Modern_history",
+          "level": 2,
+          "children": []
+        }
+      ]
+    },
+    "Arts": {
+      "name": "Arts",
+      "path": "Arts",
+      "wiki_url": "https://en.wikipedia.org/wiki/The_arts",
+      "level": 1,
+      "picks_editor": "Floyd",
+      "children": [
+        {
+          "name": "Music",
+          "path": "Arts/Music",
+          "wiki_url": "https://en.wikipedia.org/wiki/Music",
+          "level": 2,
+          "children": []
+        },
+        {
+          "name": "Visual Arts",
+          "path": "Arts/Visual_Arts",
+          "wiki_url": "https://en.wikipedia.org/wiki/Visual_arts",
+          "level": 2,
+          "children": []
+        }
+      ]
+    }
+  },
+  "all_paths": [
+    "Science",
+    "Science/Physics",
+    "Science/Physics/Quantum_Mechanics",
+    "Science/Chemistry",
+    "History",
+    "History/Ancient_History",
+    "History/Modern_History",
+    "Arts",
+    "Arts/Music",
+    "Arts/Visual_Arts"
+  ]
+}

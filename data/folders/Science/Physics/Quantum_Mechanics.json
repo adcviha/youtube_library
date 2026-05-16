@@ -1,0 +1,20 @@
+{
+  "path": "Science/Physics/Quantum_Mechanics",
+  "videos": [
+    {
+      "id": "A5QzlBDH3gc",
+      "title": "Bell's Theorem: The Quantum Venn Diagram Paradox",
+      "channel": "minutephysics",
+      "embeddable": true,
+      "gif_url": null
+    },
+    {
+      "id": "8ORLzQIc3Yg",
+      "title": "Quantum Fields: The Real Building Blocks of the Universe",
+      "channel": "The Royal Institution",
+      "embeddable": true,
+      "gif_url": null
+    }
+  ],
+  "last_updated": "2026-05-15T00:00:00Z"
+}

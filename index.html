@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The YouTube Library</title>
+<link rel="stylesheet" href="https://unpkg.com/98.css@0.1.25/dist/98.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="desktop">
+
+  <!-- Main Explorer Window -->
+  <div class="window" id="explorer">
+    <div class="title-bar">
+      <div class="title-bar-text" id="windowTitle">The YouTube Library</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close"></button>
+      </div>
+    </div>
+
+    <div class="menu-bar">
+      <span class="menu-item">File</span>
+      <span class="menu-item">Edit</span>
+      <span class="menu-item">View</span>
+      <span class="menu-item">Help</span>
+    </div>
+
+    <div class="address-bar" id="addressBar">
+      <span class="address-label">Address:</span>
+      <span id="breadcrumb"></span>
+    </div>
+
+    <div class="window-body" id="windowBody">
+      <div class="contents-pane" id="contentsPane">
+        <div class="loading-indicator" id="loadingIndicator">
+          <div class="hourglass"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <span id="itemCount"></span>
+    </div>
+  </div>
+
+  <!-- Video Popup -->
+  <div class="window video-popup" id="videoPopup" style="display:none;">
+    <div class="title-bar">
+      <div class="title-bar-text" id="videoPopupTitle">Video</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close" id="closeVideo"></button>
+      </div>
+    </div>
+    <div class="window-body video-popup-body">
+      <div id="videoContainer"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
