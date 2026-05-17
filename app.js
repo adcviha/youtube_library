@@ -372,6 +372,8 @@ function makeDraggable(win) {
     win.style.position = 'fixed';
     win.style.left = rect.left + 'px';
     win.style.top = rect.top + 'px';
+    win.style.width = rect.width + 'px';
+    win.style.height = rect.height + 'px';
     win.style.margin = '0';
     win.style.zIndex = getTopZIndex() + 1;
 
@@ -413,6 +415,8 @@ function makeResizable(win) {
       var startX = e.clientX;
       var startY = e.clientY;
       var rect = win.getBoundingClientRect();
+      win.style.maxWidth = 'none';
+      win.style.maxHeight = 'none';
 
       function onMove(e) {
         var dx = e.clientX - startX;
@@ -600,8 +604,8 @@ function initTheme() {
 initTheme();
 setupTitleBarButtons();
 makeDraggable(document.getElementById('explorer'));
-makeResizable(document.getElementById('explorer'));
 addResizeHandles(document.getElementById('explorer'));
+makeResizable(document.getElementById('explorer'));
 
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 document.getElementById('navBack').addEventListener('click', goBack);

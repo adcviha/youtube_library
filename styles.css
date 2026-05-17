@@ -16,7 +16,7 @@ html, body {
 
 /* XP theme: Bliss wallpaper */
 .theme-xp .desktop {
-  background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bliss.jpg/1280px-Bliss.jpg') center/cover no-repeat;
+  background: #3a6ea5 url('https://archive.org/download/Bliss_201311/Bliss.jpg') center/cover no-repeat;
 }
 
 /* Explorer Window */
@@ -252,7 +252,59 @@ html, body {
   font-size: 11px;
 }
 
-/* Video Window (dynamically created) */
+/* XP theme overrides for custom chrome */
+.theme-xp .menu-bar {
+  background: #ECE9D8;
+  border-bottom: 1px solid #ACA899;
+}
+
+.theme-xp .menu-item:hover {
+  background: #316AC5;
+  color: #fff;
+}
+
+.theme-xp .address-bar {
+  background: #ECE9D8;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ACA899;
+}
+
+.theme-xp .nav-btn {
+  background: #ECE9D8;
+  border: 1px solid #ACA899;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.theme-xp .nav-btn:hover:not(:disabled) {
+  border-color: #7A9EDB;
+  background: #F7F3E8;
+}
+
+.theme-xp .nav-btn:active:not(:disabled) {
+  border-color: #316AC5;
+  background: #D9D2C0;
+}
+
+.theme-xp .nav-btn:disabled {
+  color: #ACA899;
+  box-shadow: none;
+}
+
+.theme-xp .breadcrumb-seg:hover {
+  background: #316AC5;
+}
+
+.theme-xp .status-bar {
+  background: #ECE9D8;
+  border-top: 1px solid #ACA899;
+}
+
+/* Video window resize handles */
+.video-window .resize-handle {
+  position: absolute;
+  z-index: 10;
+}
 .video-window {
   position: fixed;
   top: 50px;
