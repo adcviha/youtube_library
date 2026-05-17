@@ -1,5 +1,5 @@
 // The YouTube Library — Win95 File Explorer
-// v0.4.0
+// v0.4.2
 
 window.DEBUG = {};
 
@@ -17,19 +17,46 @@ var navPosition = -1;
 
 var BASE = location.pathname.replace(/\/[^/]*$/, '');
 
-// Period-accurate Win98-style pixel folder icon (manila folder with tab)
-var FOLDER_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
-  + '<rect x="1" y="5" width="13" height="5" rx="1" fill="#F5D67B" stroke="#808080" stroke-width="1"/>'
+// Period-accurate Win95-style pixel folder icon (manila folder with beveled tab)
+var WIN95_FOLDER_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+  + '<rect x="1" y="4" width="14" height="6" rx="1" fill="#F5D67B" stroke="#808080" stroke-width="1"/>'
   + '<rect x="2" y="9" width="28" height="20" rx="1" fill="#FCE994" stroke="#808080" stroke-width="1"/>'
+  + '<line x1="4" y1="9" x2="4" y2="28" stroke="#FDEAB0" stroke-width="1"/>'
   + '<rect x="2" y="9" width="28" height="3" fill="#FDEAB0"/>'
+  + '<line x1="3" y1="9" x2="28" y2="9" stroke="#FEF3CE" stroke-width="1"/>'
+  + '<line x1="3" y1="27" x2="28" y2="27" stroke="#D4B060" stroke-width="1"/>'
   + '</svg>';
+
+// XP-style folder icon (saturated, curved tab, gradient-like bands)
+var XP_FOLDER_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+  + '<defs>'
+  + '<linearGradient id="xpg" x1="0" y1="0" x2="0" y2="1">'
+  + '<stop offset="0%" stop-color="#FFD97A"/>'
+  + '<stop offset="100%" stop-color="#F0B840"/>'
+  + '</linearGradient>'
+  + '<linearGradient id="xpt" x1="0" y1="0" x2="0" y2="1">'
+  + '<stop offset="0%" stop-color="#FFE49A"/>'
+  + '<stop offset="100%" stop-color="#F5CC60"/>'
+  + '</linearGradient>'
+  + '</defs>'
+  + '<rect x="2" y="6" width="27" height="22" rx="2" fill="url(#xpg)" stroke="#C8962E" stroke-width="1"/>'
+  + '<path d="M1,9 C1,6 5,4 10,4 L16,4 C18,4 20,5 20,7 L20,9 L1,9 Z" fill="url(#xpt)" stroke="#C8962E" stroke-width="1"/>'
+  + '<rect x="3" y="7" width="25" height="20" rx="1" fill="#FFEBB0" opacity="0.5"/>'
+  + '<line x1="3" y1="7" x2="27" y2="7" stroke="#FFF0C8" stroke-width="1" opacity="0.7"/>'
+  + '</svg>';
+
+var WIN95_FOLDER_ICON_URL = 'data:image/svg+xml;base64,' + btoa(WIN95_FOLDER_ICON_SVG);
+var XP_FOLDER_ICON_URL = 'data:image/svg+xml;base64,' + btoa(XP_FOLDER_ICON_SVG);
+
+function getFolderIconURL() {
+  return getTheme() === 'xp' ? XP_FOLDER_ICON_URL : WIN95_FOLDER_ICON_URL;
+}
 
 var VIDEO_ICON_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
   + '<rect x="4" y="6" width="24" height="20" rx="2" fill="#808080" stroke="#404040" stroke-width="1"/>'
   + '<polygon points="12,10 12,22 24,16" fill="#fff"/>'
   + '</svg>';
 
-var FOLDER_ICON_URL = 'data:image/svg+xml;base64,' + btoa(FOLDER_ICON_SVG);
 var VIDEO_ICON_URL = 'data:image/svg+xml;base64,' + btoa(VIDEO_ICON_SVG);
 
 // ---- Bootstrap ----
@@ -262,10 +289,10 @@ function createIcon(opts) {
   if (gifUrl) {
     img.src = gifUrl;
     img.onerror = function() {
-      img.src = type === 'folder' ? FOLDER_ICON_URL : VIDEO_ICON_URL;
+      img.src = type === 'folder' ? getFolderIconURL() : VIDEO_ICON_URL;
     };
   } else {
-    img.src = type === 'folder' ? FOLDER_ICON_URL : VIDEO_ICON_URL;
+    img.src = type === 'folder' ? getFolderIconURL() : VIDEO_ICON_URL;
   }
 
   var span = document.createElement('span');
@@ -308,10 +335,10 @@ function openVideoWindow(video) {
       ) +
     '</div>';
 
-  addResizeHandles(win);
+  addResizeHandles(win, 'corners');
   document.body.appendChild(win);
   makeDraggable(win);
-  makeResizable(win);
+  makeResizable(win, 16/9);
 
   // Close button
   var closeBtn = win.querySelector('button[aria-label="Close"]');
@@ -395,8 +422,13 @@ function makeDraggable(win) {
 
 // ---- Window Resizing ----
 
-function addResizeHandles(win) {
-  var directions = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+function addResizeHandles(win, mode) {
+  var directions;
+  if (mode === 'corners') {
+    directions = ['nw', 'ne', 'sw', 'se'];
+  } else {
+    directions = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+  }
   for (var i = 0; i < directions.length; i++) {
     var handle = document.createElement('div');
     handle.className = 'resize-handle ' + directions[i];
@@ -404,7 +436,7 @@ function addResizeHandles(win) {
   }
 }
 
-function makeResizable(win) {
+function makeResizable(win, aspectRatio) {
   var handles = win.querySelectorAll('.resize-handle');
   for (var i = 0; i < handles.length; i++) {
     handles[i].addEventListener('mousedown', function(e) {
@@ -421,20 +453,46 @@ function makeResizable(win) {
       function onMove(e) {
         var dx = e.clientX - startX;
         var dy = e.clientY - startY;
+        var w, h;
 
+        // Compute base width
         if (direction.indexOf('e') >= 0) {
-          win.style.width = Math.max(320, rect.width + dx) + 'px';
+          w = Math.max(320, rect.width + dx);
+        } else if (direction.indexOf('w') >= 0) {
+          w = Math.max(320, rect.width - dx);
+        } else {
+          w = rect.width;
         }
-        if (direction.indexOf('w') >= 0) {
-          win.style.width = Math.max(320, rect.width - dx) + 'px';
-          win.style.left = (rect.left + dx) + 'px';
-        }
+
+        // Compute base height
         if (direction.indexOf('s') >= 0) {
-          win.style.height = Math.max(240, rect.height + dy) + 'px';
+          h = Math.max(200, rect.height + dy);
+        } else if (direction.indexOf('n') >= 0) {
+          h = Math.max(200, rect.height - dy);
+        } else {
+          h = rect.height;
+        }
+
+        // Lock aspect ratio if specified (only for corner drags where both dimensions change)
+        if (aspectRatio && direction.length === 2) {
+          // Corner drag — lock to aspect ratio using the dominant axis
+          if (Math.abs(dx) >= Math.abs(dy)) {
+            h = w / aspectRatio;
+          } else {
+            w = h * aspectRatio;
+          }
+          w = Math.max(320, w);
+          h = Math.max(200, h);
+        }
+
+        win.style.width = w + 'px';
+        win.style.height = h + 'px';
+
+        if (direction.indexOf('w') >= 0) {
+          win.style.left = (rect.right - w) + 'px';
         }
         if (direction.indexOf('n') >= 0) {
-          win.style.height = Math.max(240, rect.height - dy) + 'px';
-          win.style.top = (rect.top + dy) + 'px';
+          win.style.top = (rect.bottom - h) + 'px';
         }
         win._resized = true;
       }
@@ -593,6 +651,7 @@ function setTheme(theme) {
 
 function toggleTheme() {
   setTheme(getTheme() === 'win95' ? 'xp' : 'win95');
+  navigateTo(state.currentPath, {pushHistory: false});
 }
 
 function initTheme() {

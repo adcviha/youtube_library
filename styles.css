@@ -14,9 +14,23 @@ html, body {
   position: relative;
 }
 
-/* XP theme: Bliss wallpaper */
+/* XP theme: Bliss wallpaper approximation + 4K image fallback */
 .theme-xp .desktop {
-  background: #3a6ea5 url('https://archive.org/download/Bliss_201311/Bliss.jpg') center/cover no-repeat;
+  background-color: #3a6ea5;
+  background-image:
+    url('https://msdesign.blob.core.windows.net/wallpapers/Microsoft_Nostalgic_Windows_Wallpaper_4k.jpg'),
+    linear-gradient(to bottom,
+      #4A85BB 0%,
+      #6BA3D6 25%,
+      #A3D2F0 50%,
+      #C5E3F6 60%,
+      #5B8C3E 62%,
+      #4A7A2E 75%,
+      #3D6626 100%
+    );
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 /* Explorer Window */
@@ -271,7 +285,7 @@ html, body {
 
 .theme-xp .nav-btn {
   background: #ECE9D8;
-  border: 1px solid #ACA899;
+  border: 1px solid transparent;
   border-radius: 2px;
   box-shadow: none;
 }
@@ -284,6 +298,7 @@ html, body {
 .theme-xp .nav-btn:active:not(:disabled) {
   border-color: #316AC5;
   background: #D9D2C0;
+  padding-top: 0;
 }
 
 .theme-xp .nav-btn:disabled {
@@ -300,11 +315,7 @@ html, body {
   border-top: 1px solid #ACA899;
 }
 
-/* Video window resize handles */
-.video-window .resize-handle {
-  position: absolute;
-  z-index: 10;
-}
+/* Video Window (dynamically created) */
 .video-window {
   position: fixed;
   top: 50px;
