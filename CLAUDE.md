@@ -79,7 +79,19 @@ We use **Major.Minor.Patch** as strings, not decimals. `0.9.10` comes after `0.9
 
 **DESIGN.md milestones are Minor targets.** When DESIGN.md says "v0.9 — Selection transform," that means the 0.9.x series delivers selection transform. Ship it as `0.9.0`. Bug fixes after that are `0.9.1`, `0.9.2`, etc. Do NOT bump the Minor digit for bug fixes.
 
-Git commits are tagged with the version. Push to master auto-deploys.
+Git commits are tagged with the version. Push to `main` auto-deploys to GitHub Pages.
+
+### Deployment (every version increment)
+
+After committing, **always** deploy. There are only two commands:
+
+```bash
+git push origin main --tags
+```
+
+That's it. The site auto-deploys to GitHub Pages when `main` receives a push. A tagged commit is the deployment artifact.
+
+If the user asks to "deploy," "push," "ship," "publish," or "put it on GitHub Pages," this is what they mean. Do not wait for the user to explicitly say "push" — after committing a version increment, offer to deploy. Better yet, just push.
 
 ### Working protocol (every task, every time)
 
