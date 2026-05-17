@@ -1,5 +1,5 @@
 // The YouTube Library — Win95 File Explorer
-// v0.3.0
+// v0.4.0
 
 window.DEBUG = {};
 
@@ -11,6 +11,9 @@ var state = {
 };
 
 window.DEBUG.state = state;
+
+var navHistory = [];
+var navPosition = -1;
 
 var BASE = location.pathname.replace(/\/[^/]*$/, '');
 
@@ -50,9 +53,22 @@ function init() {
 
 // ---- Navigation ----
 
-function navigateTo(path) {
+function navigateTo(path, opts) {
+  opts = opts || {};
   state.currentPath = path;
   setLoading(true);
+
+  if (opts.pushHistory !== false) {
+    // Truncate forward history when branching off mid-history
+    if (navPosition < navHistory.length - 1) {
+      navHistory = navHistory.slice(0, navPosition + 1);
+    }
+    // Don't push the same path twice in a row
+    if (navHistory.length === 0 || navHistory[navPosition] !== path) {
+      navHistory.push(path);
+      navPosition = navHistory.length - 1;
+    }
+  }
 
   var promise;
   if (path) {
@@ -68,7 +84,27 @@ function navigateTo(path) {
     setLoading(false);
     updateWindowTitle();
     updateAddressBar();
+    updateNavButtons();
   });
+}
+
+function goBack() {
+  if (navPosition <= 0) return;
+  navPosition--;
+  navigateTo(navHistory[navPosition], {pushHistory: false});
+}
+
+function goForward() {
+  if (navPosition >= navHistory.length - 1) return;
+  navPosition++;
+  navigateTo(navHistory[navPosition], {pushHistory: false});
+}
+
+function updateNavButtons() {
+  var backBtn = document.getElementById('navBack');
+  var fwdBtn = document.getElementById('navForward');
+  if (backBtn) backBtn.disabled = navPosition <= 0;
+  if (fwdBtn) fwdBtn.disabled = navPosition >= navHistory.length - 1;
 }
 
 function getNodeByPath(path) {
@@ -253,6 +289,8 @@ function openVideoWindow(video) {
   var offsetY = 40 + state.videoWindows.length * 25;
   win.style.left = offsetX + 'px';
   win.style.top = offsetY + 'px';
+  win.style.position = 'fixed';
+  win.style.zIndex = getTopZIndex() + 1;
 
   win.innerHTML =
     '<div class="title-bar video-title-bar">' +
@@ -432,7 +470,30 @@ function setupTitleBarButtons() {
   if (maximizeBtn) {
     maximizeBtn.addEventListener('click', function() {
       var explorer = document.getElementById('explorer');
-      explorer.classList.toggle('maximized');
+      if (explorer.classList.contains('maximized')) {
+        // Restore
+        explorer.classList.remove('maximized');
+        explorer.style.position = '';
+        explorer.style.top = '';
+        explorer.style.left = '';
+        explorer.style.width = '';
+        explorer.style.height = '';
+        explorer.style.margin = '';
+        explorer.style.zIndex = '';
+      } else {
+        // Maximize
+        var rect = explorer.getBoundingClientRect();
+        explorer._prevRect = { left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px', height: rect.height + 'px' };
+        explorer.classList.add('maximized');
+        explorer.style.position = 'fixed';
+        explorer.style.top = '0';
+        explorer.style.left = '0';
+        explorer.style.width = '100vw';
+        explorer.style.height = '100vh';
+        explorer.style.margin = '0';
+        explorer.style.zIndex = getTopZIndex() + 1;
+        explorer._resized = true;
+      }
     });
   }
 }
@@ -515,9 +576,13 @@ function setTheme(theme) {
   if (theme === 'xp') {
     win95Link.disabled = true;
     xpLink.disabled = false;
+    document.body.classList.add('theme-xp');
+    document.body.classList.remove('theme-win95');
   } else {
     win95Link.disabled = false;
     xpLink.disabled = true;
+    document.body.classList.add('theme-win95');
+    document.body.classList.remove('theme-xp');
   }
   localStorage.setItem(THEME_KEY, theme);
 }
@@ -539,5 +604,15 @@ makeResizable(document.getElementById('explorer'));
 addResizeHandles(document.getElementById('explorer'));
 
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+document.getElementById('navBack').addEventListener('click', goBack);
+document.getElementById('navForward').addEventListener('click', goForward);
+
+// Click-to-front: bring any window to the top when clicked
+document.addEventListener('mousedown', function(e) {
+  var win = e.target.closest('.window');
+  if (win) {
+    win.style.zIndex = getTopZIndex() + 1;
+  }
+});
 
 init();

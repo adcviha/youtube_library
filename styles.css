@@ -14,6 +14,11 @@ html, body {
   position: relative;
 }
 
+/* XP theme: Bliss wallpaper */
+.theme-xp .desktop {
+  background: #3a6ea5 url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bliss.jpg/1280px-Bliss.jpg') center/cover no-repeat;
+}
+
 /* Explorer Window */
 #explorer {
   max-width: 800px;
@@ -26,8 +31,6 @@ html, body {
 
 #explorer.maximized {
   max-width: none;
-  width: calc(100vw - 40px);
-  min-height: calc(100vh - 40px);
 }
 
 /* Draggable — title bar is the drag handle */
@@ -67,6 +70,38 @@ html, body {
   font-size: 12px;
 }
 
+/* Back / Forward navigation buttons */
+.nav-buttons {
+  display: flex;
+  gap: 2px;
+  margin-right: 2px;
+}
+
+.nav-btn {
+  width: 24px;
+  height: 22px;
+  padding: 0;
+  font-size: 10px;
+  line-height: 1;
+  border: none;
+  background: #c0c0c0;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:active:not(:disabled) {
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #fff;
+  padding-top: 1px;
+}
+
+.nav-btn:disabled {
+  color: #808080;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+}
+
 .address-label {
   color: #000;
   flex-shrink: 0;
@@ -103,9 +138,12 @@ html, body {
 .window-body {
   flex: 1;
   overflow-y: auto;
-  padding: 4px;
-  background: #fff;
   position: relative;
+}
+
+/* Override 98.css inset margin so contents fill the pane */
+.window-body .contents-pane {
+  margin: 0;
 }
 
 .contents-pane {
@@ -220,7 +258,6 @@ html, body {
   top: 50px;
   left: 50px;
   width: 560px;
-  z-index: 100;
   display: none;
 }
 
